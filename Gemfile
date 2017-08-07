@@ -1,3 +1,6 @@
-source 'https://rubygems.org
-gem 'rspec'
-gem 'rubocop'
+source 'https://rubygems.org'
+
+ruby '2.4.0'
+
+gem 'rspec', group: :test
+gem 'rubocop', group: :test
