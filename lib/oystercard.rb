@@ -21,9 +21,9 @@ class Oystercard
     !@entry_station.nil?
   end
 
-  def touch_in(station = nil)
+  def touch_in(station = nil) # set as no class is created
     raise 'Insufficient funds' if insufficient_funds?
-    @entry_station = station
+    @entry_station = station  # station = Station.new
   end
 
   def touch_out
@@ -43,5 +43,5 @@ class Oystercard
 
   def deduct(amount)
     @balance -= amount
-  end  
+  end
 end
