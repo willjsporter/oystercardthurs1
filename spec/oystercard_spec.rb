@@ -79,4 +79,13 @@ describe Oystercard do
       expect { subject.touch_in }.to raise_error 'Insufficient funds'
     end
   end
+
+  describe '#touch_out' do
+
+    it 'should reduce the balance byt the minimum fair' do
+      expect { subject.touch_out }.to change { subject.balance }.by(-1)
+    end
+
+  end
+
 end
