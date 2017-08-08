@@ -23,7 +23,7 @@ class Oystercard
 
   def touch_in(station = nil) # set as no class is created
     raise 'Insufficient funds' if insufficient_funds?
-    @entry_station = station  # station = Station.new
+    @entry_station = station  #  station = Station.new
   end
 
   def touch_out
