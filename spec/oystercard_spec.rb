@@ -52,7 +52,7 @@ describe Oystercard do
     end
 
     it 'is in journey once they touch in' do
-      subject.touch_in
+      subject.touch_in(station)
       expect(subject).to be_in_journey
       # is the same as
       # expect(subject.in_journey?).to eq true
