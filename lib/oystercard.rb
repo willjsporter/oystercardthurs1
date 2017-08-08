@@ -1,19 +1,19 @@
 MAX_BALANCE = 90
+MINIMUM_FARE = 1
+DEFAULT_BALANCE = 0
 
 # in lib/oystercard.rb
 
 class Oystercard
-  attr_accessor :balance
+  attr_reader :balance
 
-  def initialize
-    @balance = 10
+  def initialize(balance = DEFAULT_BALANCE)
+    @balance = balance
     @in_use = false
-
-
   end
 
   def top_up(amount)
-    raise exceeded_limit if @balance + amount > MAX_BALANCE
+    raise "Balance cannot exceed #{MAX_BALANCE}" if exceeded_limit?(amount)
     @balance += amount
   end
 
@@ -26,6 +26,7 @@ class Oystercard
   end
 
   def touch_in
+    raise 'Insufficient funds' if insufficient_funds?
     @in_use = true
   end
 
@@ -33,7 +34,13 @@ class Oystercard
     @in_use = false
   end
 
-  def exceeded_limit
-    raise "Balance cannot exceed #{MAX_BALANCE}"
+  private
+
+  def exceeded_limit?(amount)
+    @balance + amount > MAX_BALANCE
+  end
+
+  def insufficient_funds?
+    @balance < MINIMUM_FARE
   end
 end
