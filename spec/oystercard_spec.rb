@@ -23,5 +23,20 @@ describe Oystercard do
       opening_balance = subject.balance
       expect(subject.top_up(5)).to eq(opening_balance + 5)
     end
+
+    it 'should raise an error' do
+      error = "Balance cannot exceed #{MAX_BALANCE}"
+      expect { subject.top_up(91) }.to raise_error(error)
+    end
+  end
+
+  describe '#deduct' do
+    it { is_expected.to respond_to :deduct }
+
+    # it 'should deduct the fare amount from the balance' do
+    #   opening_balance = subject.balance
+    #   expect { subject.deduct(5) }.to eq(opening_balance - 5)
+    # end
+
   end
 end
