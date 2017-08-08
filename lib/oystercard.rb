@@ -5,11 +5,12 @@ DEFAULT_BALANCE = 0
 # in lib/oystercard.rb
 
 class Oystercard
-  attr_reader :balance
+  attr_reader :balance, :entry_station
 
   def initialize(balance = DEFAULT_BALANCE)
     @balance = balance
     @in_use = false
+    @entry_station = nil
   end
 
   def top_up(amount)
@@ -21,13 +22,15 @@ class Oystercard
     @in_use
   end
 
-  def touch_in
+  def touch_in(station = nil)
     raise 'Insufficient funds' if insufficient_funds?
+    @entry_station = station
     @in_use = true
   end
 
   def touch_out
     deduct(MINIMUM_FARE)
+    @entry_station = nil
     @in_use = false
   end
 

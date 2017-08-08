@@ -1,8 +1,7 @@
 require 'oystercard'
 
 describe Oystercard do
-  # subject { Oystercard.new(5) }
-  # adds an initialized amout for all those below
+  let(:station) { double :station }
 
   describe '#balance' do
     it 'should respond to balance' do
@@ -36,13 +35,7 @@ describe Oystercard do
   end
 
   describe '#deduct' do
-    it { is_expected.to respond_to :deduct }
-
-    it 'should deduct the fare amount from the balance' do
-      subject.top_up 10
-      opening_balance = subject.balance
-      expect(subject.deduct(5)).to eq(opening_balance - 5)
-    end
+    it { is_expected.to_not respond_to :deduct }
   end
 
   describe '#in_journey?' do
@@ -78,14 +71,25 @@ describe Oystercard do
     it 'should raise error if insufficient funds' do
       expect { subject.touch_in }.to raise_error 'Insufficient funds'
     end
+
+    it 'stores station of entry' do
+      subject.top_up 10
+      subject.touch_in(station)
+      expect(subject.entry_station).to eq station
+    end
   end
 
   describe '#touch_out' do
-
+    before { subject.instance_variable_set(:@balance, 30) }
+    before { subject.touch_in(station) }
     it 'should reduce the balance byt the minimum fair' do
       expect { subject.touch_out }.to change { subject.balance }.by(-1)
     end
 
-  end
+    it 'forgets entry station on touch out' do
+      subject.touch_out
+      expect(subject.entry_station).to be_nil
+    end
 
+  end
 end
