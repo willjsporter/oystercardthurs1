@@ -4,13 +4,15 @@ DEFAULT_BALANCE = 0
 
 # in lib/oystercard.rb
 
+
 class Oystercard
-  attr_reader :balance, :entry_station, :journey
+  attr_reader :balance, :entry_station, :journey, :trip_history
 
   def initialize(balance = DEFAULT_BALANCE)
     @balance = balance
     @entry_station = nil
     @journey = {}
+    @trip_history = []
   end
 
   def top_up(amount)
@@ -25,14 +27,15 @@ class Oystercard
   def touch_in(station = nil) # set as no class is created
     raise 'Insufficient funds' if insufficient_funds?
     @entry_station = station  #  station = Station.new
-    @journey[:entry_station] = station
-    @journey[:exit_station] = "haven't touched out yet"
+    @journey[@entry_station] = 'not touched out yet'
   end
 
   def touch_out(station = nil)
     deduct(MINIMUM_FARE)
-    @entry_station = nil
-    @journey[:exit_station] = station
+    # @entry_station = nil
+    @journey[@entry_station] = station
+    @trip_history << @journey
+    @journey = {}
   end
 
   private

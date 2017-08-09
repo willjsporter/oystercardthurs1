@@ -1,4 +1,5 @@
 require 'oystercard'
+require 'station'
 
 describe Oystercard do
   let(:station) { double :station }
@@ -100,7 +101,7 @@ describe Oystercard do
       # subject { Oystercard.new 30 }
       subject.top_up 10
       subject.touch_in('aldgate')
-      expect(subject.journey).to include(:entry_station => 'aldgate')
+      expect(subject.journey).to include('aldgate' => 'not touched out yet')
     end
 
   end
@@ -116,7 +117,7 @@ describe Oystercard do
 
     it 'forgets entry station on touch out' do
       subject.touch_out
-      expect(subject.entry_station).to be_nil
+      expect(subject.journey).to be_empty
     end
 
   end
