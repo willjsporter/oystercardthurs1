@@ -7,6 +7,12 @@ describe Oystercard do
   # 1) doesn't depend on the class being created
   #  2) the class won't affect the functionality of the test
 
+  describe '#init' do
+    it 'should start with an empty hash' do
+      expect(subject.journey).to be_empty
+    end
+  end
+
   describe '#balance' do
     it 'should respond to balance' do
       expect(subject).to respond_to(:balance)
@@ -84,11 +90,19 @@ describe Oystercard do
     end
     # raise erros have to be in a block
 
-    it 'stores station of entry' do
+    it 'stores station of entry to' do
       subject.top_up 10
       subject.touch_in(station)
       expect(subject.entry_station).to eq station
     end
+
+    it 'should add starting station to journey' do
+      # subject { Oystercard.new 30 }
+      subject.top_up 10
+      subject.touch_in('aldgate')
+      expect(subject.journey).to include(:entry_station => 'aldgate')
+    end
+
   end
 
   describe '#touch_out' do
@@ -106,4 +120,5 @@ describe Oystercard do
     end
 
   end
+
 end
