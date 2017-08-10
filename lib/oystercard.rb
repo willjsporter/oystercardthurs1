@@ -4,7 +4,6 @@ DEFAULT_BALANCE = 0
 
 # in lib/oystercard.rb
 
-
 class Oystercard
   attr_reader :balance, :entry_station, :journey, :trip_history
 
@@ -21,11 +20,12 @@ class Oystercard
   end
 
   def in_journey?
-    !@entry_station.nil?
+    !!@entry_station
   end
 
   def touch_in(station = nil) # set as no class is created
     raise 'Insufficient funds' if insufficient_funds?
+    raise 'error, you have already tapped in' unless @entry_station.nil?
     @entry_station = station  #  station = Station.new
     @journey[@entry_station] = 'not touched out yet'
   end

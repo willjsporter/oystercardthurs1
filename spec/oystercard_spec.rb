@@ -8,13 +8,13 @@ describe Oystercard do
   # 1) doesn't depend on the class being created
   #  2) the class won't affect the functionality of the test
 
-  describe '#init' do
+  context '#init' do
     it 'should start with an empty hash' do
       expect(subject.journey).to be_empty
     end
   end
 
-  describe '#balance' do
+  context '#balance' do
     it 'should respond to balance' do
       expect(subject).to respond_to(:balance)
     end
@@ -29,7 +29,7 @@ describe Oystercard do
     end
   end
 
-  describe '#top_up' do
+  context '#top_up' do
     it 'should respond to top up' do
       expect(subject).to respond_to(:top_up)
     end
@@ -47,11 +47,11 @@ describe Oystercard do
     end
   end
 
-  describe '#deduct' do
+  context '#deduct' do
     it { is_expected.to_not respond_to :deduct }
   end
 
-  describe '#in_journey?' do
+  context '#in_journey?' do
     before { subject.instance_variable_set(:@balance, 30) }
     it { is_expected.to respond_to :in_journey? }
     # stubs:
@@ -85,11 +85,17 @@ describe Oystercard do
     it { is_expected.to respond_to :touch_out }
   end
 
-  describe '#touch_in' do
+  context '#touch_in' do
     it 'should raise error if insufficient funds' do
       expect { subject.touch_in }.to raise_error 'Insufficient funds'
     end
     # raise erros have to be in a block
+
+    it 'can store new elements as hashes in @journey_array' do
+      subject.top_up(10)
+      subject.touch_in('Victoria')
+      expect { subject.touch_in "StJamesPark" }.to raise_error 'error, you have already tapped in'
+    end
 
     it 'stores station of entry to' do
       subject.top_up 10
@@ -106,7 +112,7 @@ describe Oystercard do
 
   end
 
-  describe '#touch_out' do
+  context '#touch_out' do
     before { subject.instance_variable_set(:@balance, 30) }
     before { subject.touch_in(station) }
     # setting criteria in the block for the rest of the methods
