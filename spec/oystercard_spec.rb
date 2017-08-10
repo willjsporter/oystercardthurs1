@@ -3,6 +3,7 @@ require 'station'
 
 describe Oystercard do
   let(:station) { double :station }
+  let(:station1) { double :station1 }
   # doube is used as no station class is created but needs to be used
   # created at the beginning of the block so works throughout
   # 1) doesn't depend on the class being created
@@ -10,7 +11,10 @@ describe Oystercard do
 
   context '#init' do
     it 'should start with an empty hash' do
-      expect(subject.journey).to be_empty
+      criteria1 = subject.balance==DEFAULT_BALANCE
+      criteria2 = subject.current_journey.nil?
+      criteria3 = subject.trip_history.empty?
+      expect(criteria1 && criteria2 && criteria3).to eq true
     end
   end
 
@@ -76,8 +80,8 @@ describe Oystercard do
     end
 
     it 'is not in a journey once they touch out' do
-      subject.touch_in
-      subject.touch_out
+      subject.touch_in("Victoria")
+      subject.touch_out(station1)
       expect(subject).to_not be_in_journey
     end
     #  had to touch in first to touch out
@@ -87,27 +91,26 @@ describe Oystercard do
 
   context '#touch_in' do
     it 'should raise error if insufficient funds' do
-      expect { subject.touch_in }.to raise_error 'Insufficient funds'
+      expect { subject.touch_in(station) }.to raise_error 'Insufficient funds'
     end
     # raise erros have to be in a block
 
-    it 'can store new elements as hashes in @journey_array' do
+    it 'will charge a penalty fare if touch in twice without touching out between' do
       subject.top_up(10)
       subject.touch_in('Victoria')
-      expect { subject.touch_in "StJamesPark" }.to raise_error 'error, you have already tapped in'
+      expect { subject.touch_in "StJamesPark" }.to change { subject.balance }.by(- PENALTY_FARE)
     end
 
-    it 'stores station of entry to' do
+    it 'creates a new journey when tapping in' do
       subject.top_up 10
       subject.touch_in(station)
-      expect(subject.entry_station).to eq station
+      expect(subject.current_journey.is_a?(Journey)).to eq true
     end
 
-    it 'should add starting station to journey' do
-      # subject { Oystercard.new 30 }
+    it 'tapping in initializes new journey instance' do
+      expect(Journey).to receive(:new).with(station)
       subject.top_up 10
-      subject.touch_in('aldgate')
-      expect(subject.journey).to include('aldgate' => 'not touched out yet')
+      subject.touch_in(station)
     end
 
   end
@@ -117,13 +120,16 @@ describe Oystercard do
     before { subject.touch_in(station) }
     # setting criteria in the block for the rest of the methods
     it 'should reduce the balance by the minimum fair' do
-      expect { subject.touch_out }.to change { subject.balance }.by(-1)
+      allow(station).to receive(:intern)
+      expect { subject.touch_out(station1) }.to change { subject.balance }.by(- MINIMUM_FARE)
     end
     #  as 1 is the minimum amount to get deducted
 
-    it 'forgets entry station on touch out' do
-      subject.touch_out
-      expect(subject.journey).to be_empty
+    it 'concludes the current journey on touch out' do
+      allow(station).to receive(:intern)
+      expect(journey).to receive(:end)
+      subject.touch_out(station1)
+
     end
 
   end
