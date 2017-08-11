@@ -1,9 +1,9 @@
 require 'journey'
 
 describe Journey do
-  let(:journey) { Journey.new "Victoria"}
-  let(:station) {double :station }
-  let(:station1) {double :station1 }
+  let(:journey) { Journey.new "Victoria" }
+  let(:station) { double :station }
+  let(:station1) { double :station1 }
 
   context '#initialize' do
 
@@ -32,21 +32,21 @@ describe Journey do
   context 'add to journey array' do
 
     it "can add journey hash to an array" do
-      ary=[1]
+      ary = [1]
       journey.end_journey(station1)
       journey.add_history(ary)
-      expect(ary[1].class).to eq Hash #{ :Victoria => station1 }
+      expect(ary[1].class).to eq Hash
     end
 
     it "records journey start in hash key" do
-      ary=[1]
+      ary = [1]
       journey.end_journey(station1)
       journey.add_history(ary)
       expect(ary[1].keys.first).to eq :Victoria
     end
 
     it "records journey end in hash value" do
-      ary=[1]
+      ary = [1]
       journey.end_journey(station1)
       journey.add_history(ary)
       expect(ary[1].values.first).to eq station1
